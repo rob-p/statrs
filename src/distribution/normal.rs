@@ -2,7 +2,7 @@ use crate::distribution::{ziggurat, Continuous, ContinuousCDF};
 use crate::function::erf;
 use crate::statistics::*;
 use crate::{consts, Result, StatsError};
-use rand::Rng;
+//use rand::Rng;
 use std::f64;
 
 /// Implements the [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
@@ -53,11 +53,6 @@ impl Normal {
     }
 }
 
-impl ::rand::distributions::Distribution<f64> for Normal {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> f64 {
-        sample_unchecked(rng, self.mean, self.std_dev)
-    }
-}
 
 impl ContinuousCDF<f64, f64> for Normal {
     /// Calculates the cumulative distribution function for the
@@ -123,6 +118,12 @@ impl Max<f64> for Normal {
     /// ```
     fn max(&self) -> f64 {
         f64::INFINITY
+    }
+}
+
+impl ::rand::distributions::Distribution<f64> for Normal {
+    fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> f64 {
+        sample_unchecked(rng, self.mean, self.std_dev)
     }
 }
 
@@ -253,7 +254,7 @@ pub fn ln_pdf_unchecked(x: f64, mean: f64, std_dev: f64) -> f64 {
 }
 
 /// draws a sample from a normal distribution using the Box-Muller algorithm
-pub fn sample_unchecked<R: Rng + ?Sized>(rng: &mut R, mean: f64, std_dev: f64) -> f64 {
+pub fn sample_unchecked<R: rand::Rng + ?Sized>(rng: &mut R, mean: f64, std_dev: f64) -> f64 {
     mean + std_dev * ziggurat::sample_std_normal(rng)
 }
 

@@ -1,5 +1,5 @@
 use crate::distribution::Continuous;
-use crate::distribution::Normal;
+use crate::distribution::Normal as DNormal;
 use crate::statistics::{Max, MeanN, Min, Mode, VarianceN};
 use crate::{Result, StatsError};
 use nalgebra::{
@@ -8,7 +8,7 @@ use nalgebra::{
     Cholesky, DefaultAllocator, Dim, DimMin, LU, U1,
 };
 use nalgebra::{DMatrix, DVector};
-use rand::Rng;
+//use rand::Rng;
 use std::f64;
 use std::f64::consts::{E, PI};
 
@@ -111,8 +111,8 @@ impl ::rand::distributions::Distribution<DVector<f64>> for MultivariateNormal {
     /// `Z` is a vector of normally distributed random variables, and
     /// `μ` is the mean vector
 
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DVector<f64> {
-        let d = Normal::new(0., 1.).unwrap();
+    fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> DVector<f64> {
+        let d = DNormal::new(0., 1.).unwrap();
         let z = DVector::<f64>::from_distribution(self.dim, &d, rng);
         (&self.cov_chol_decomp * z) + &self.mu
     }
